@@ -1,61 +1,35 @@
-const Connect=require('../connect'); 
-exports.insert_user =async function(userName){
-    var db = await Connect.connect((err ,db) => {
-        if (err){
-            return err;
-        }else{  
-            return db;
-        }
-    });
-    console.log(db);
-    // db.collection('users').insertOne({'user_name':userName},function(err,db){
-    //     if(err){
-    //         return err;
-    //     }else{   
-    //         db.close();
-    //         return 'success';
-    //     }
-    // });
+var mongoose = require('mongoose');
+
+function User() {
+    var Connect = require('../connect');
+    this.insert_user = function(userName) {
+        var db = Connect.connect;
+        db.then(value =>
+            value.collection('users').insertOne({
+                'name': userName
+            }, function(err, db) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log('succeed in insert user');
+                }
+            })
+        );
+
+    }
+    this.search_user = function(userId) {
+        var db = Connect.connect;
+        db.then(value =>
+            value.collection('users').find({
+                '_id': mongoose.Types.ObjectId(userId)
+            }).toArray(function(err, res) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(res);
+                }
+            })
+        );
+    }
 }
-
-
-// const add = (a, b) =>{
-//     // http
-//     // sleep 3
-//     // return a + b;
-// }
-
-// const addAsync = (a, b, cb) =>{
-//     // http a + b
-//     // return 
-
-//     cb(null, a + b)
-// }
-
-// const run = async () => {
-//     add(1, 2)
-
-//     // addAsync(1, 2, (err, result)=>{
-//     //     addAsync(1, 2, (err, result)=>{
-//     //         addAsync(1, 2, (err, result)=>{
-//     //             addAsync(1, 2, (err, result)=>{
-        
-//     //             })
-//     //         })
-//     //     })
-//     // })
-
-//     // add(2, 3)
-
-//     const ret = await new Promise((resolve, reject) =>{
-//         addAsync(1, 2, (err, ret) =>{
-//             if (err) {
-//                 return reject(err)
-//             }
-
-//             resolve(resolve)
-//         })
-//     })
-
-//     // ...
-// }
+module.exports = User;
