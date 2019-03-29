@@ -1,29 +1,30 @@
-var ObjectId = require('mongodb').ObjectID;
 var sd = require('silly-datetime');
 
-function User() {
+function RolePrivilege() {
     var Connect = require('../connect');
-    this.insert_user = function (userName) {
+    this.insert_role_privilege = function (roleId,privilegeId) {
         var db = Connect.connect;
         db.then(value =>
-            value.collection('users').insertOne({
-                'user_name': userName,
+            value.collection('role_privilege').insertOne({
+                'role_id': roleId,
+                'privilege_id': privilegeId,
                 'update_time':sd.format(new Date(),'YYYY-MM-DD HH:mm:ss')
+
             }, function (err) {
                 if (err) {
                     console.log(err);
                 } else {
-                    console.log('succeed in insert user');
+                    console.log('succeed in insert role_privilege');
                 }
             })
         );
-
     }
-    this.search_user = function (userId) {
+
+    this.search_role_privilege = function (roleId) {
         var db = Connect.connect;
         db.then(value =>
-            value.collection('users').findOne({
-                '_id': ObjectId(userId)
+            value.collection('role_privilege').findOne({
+                'role_id': roleId
             }, {}, function (err, res) {
                 if (err) {
                     console.log('id不存在');
@@ -34,19 +35,21 @@ function User() {
             })
         );
     }
-    this.delete_user = function (userId) {
+
+    this.delete_role_privilege = function (roleId,privilegeId) {
         var db = Connect.connect;
-        db.then(value => value.collection('users').deleteOne({
-            '_id': ObjectId(userId)
+        db.then(value => value.collection('role_privilege').deleteOne({
+            'role_id': roleId,
+            'privilege_id':privilegeId
         }, function (err, res) {
             if (err) {
                 console.log('id不存在');
                 console.log(err);
             } else {
-                console.log('删除成功');
+                console.log('角色权限解除绑定成功');
                 console.log(res);
             }
         }))
     }
 }
-module.exports = User;
+module.exports = RolePrivilege;

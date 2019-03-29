@@ -1,4 +1,5 @@
 var ObjectId = require('mongodb').ObjectID;
+var sd = require('silly-datetime');
 
 function Privilege() {
     var Connect = require('../connect');
@@ -6,7 +7,9 @@ function Privilege() {
         var db = Connect.connect;
         db.then(value =>
             value.collection('privileges').insertOne({
-                'privilege_desc':privilegeDesc 
+                'privilege_desc':privilegeDesc,
+                'update_time':sd.format(new Date(),'YYYY-MM-DD HH:mm:ss')
+
             }, function (err) {
                 if (err) {
                     console.log(err);

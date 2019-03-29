@@ -1,13 +1,16 @@
-var ObjectId = require('mongodb').ObjectID;
+var sd = require('silly-datetime');
 
 function UserRole(){
     var Connect = require('../connect');
     this.insert_user_role = function (userId,roleId) {
         var db = Connect.connect;
+        console.log(userId);
         db.then(value =>
             value.collection('user_role').insertOne({
                 'user_id': userId,
-                'role_id': roleId
+                'role_id': roleId,
+                'update_time':sd.format(new Date(),'YYYY-MM-DD HH:mm:ss')
+
             }, function (err) {
                 if (err) {
                     console.log(err);
@@ -37,7 +40,7 @@ function UserRole(){
         var db = Connect.connect;
         db.then(value => value.collection('user_role').deleteOne({
             'user_id': userId,
-            'roleId': roleId
+            'role_id': roleId
         }, function (err, res) {
             if (err) {
                 console.log('id不存在');

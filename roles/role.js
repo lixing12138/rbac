@@ -1,4 +1,5 @@
 var ObjectId = require('mongodb').ObjectID;
+var sd = require('silly-datetime');
 
 function Role() {
     var Connect = require('../connect');
@@ -6,7 +7,8 @@ function Role() {
         var db = Connect.connect;
         db.then(value =>
             value.collection('roles').insertOne({
-                'role_name': roleName
+                'role_name': roleName,
+                'update_time':sd.format(new Date(),'YYYY-MM-DD HH:mm:ss')
             }, function (err) {
                 if (err) {
                     console.log(err);

@@ -4,12 +4,14 @@ const Users = require('./users/user');
 const Roles=require('./roles/role');
 const Privilege=require('./privileges/privilege');
 const UserRole=require('./user_role/user_role');
+const RolePrivilege=require('./role_privilege/role_privilege');
 
 const app = new koa();
 const user = new Users();
 const role=new Roles();
 const privilege=new Privilege();
 const userRole=new UserRole();
+const rolePrivilege=new RolePrivilege();
 /**
  * user module 
  * */
@@ -62,7 +64,7 @@ app.use(route.delete('/privilege',privilegeDelete));
  *bind role and user
  */
 const userRoleInsert = ctx => {
-    userRole.insert_user_role(ctx.query['useId'],ctx.query['roleId']);
+    userRole.insert_user_role(ctx.query['userId'],ctx.query['roleId']);
 }
 const userRoleSearch = ctx => {
     userRole.search_user_role(ctx.query['userId']);
@@ -73,5 +75,21 @@ const userRoleDelete = ctx => {
 app.use(route.post('/userRole',userRoleInsert));
 app.use(route.get('/userRole',userRoleSearch));
 app.use(route.delete('/userRole',userRoleDelete));
+
+/*
+*role-privilege module
+*/
+const rolePrivilegeInsert = ctx => {
+    rolePrivilege.insert_role_privilege(ctx.query['roleId'],ctx.query['privilegeId']);
+}
+const rolePrivilegeSearch = ctx => {
+    rolePrivilege.search_role_privilege(ctx.query['roleId']);
+}
+const rolePrivilegeDelete = ctx => {
+    rolePrivilege.delete_role_privilege(ctx.query['roleId'],ctx.query['privilegeId']);
+}
+app.use(route.post('/rolePrivilege',rolePrivilegeInsert));
+app.use(route.get('/rolePrivilege',rolePrivilegeSearch));
+app.use(route.delete('/rolePrivilege',rolePrivilegeDelete));
 
 app.listen(3000);
