@@ -1,27 +1,28 @@
 var ObjectId = require('mongodb').ObjectID;
 
-function User() {
+function UserRole(){
     var Connect = require('../connect');
-    this.insert_user = function (userName) {
+    this.insert_user_role = function (userId,roleId) {
         var db = Connect.connect;
         db.then(value =>
-            value.collection('users').insertOne({
-                'user_name': userName
+            value.collection('user_role').insertOne({
+                'user_id': userId,
+                'role_id': roleId
             }, function (err) {
                 if (err) {
                     console.log(err);
                 } else {
-                    console.log('succeed in insert user');
+                    console.log('succeed in insert user_role');
                 }
             })
         );
 
     }
-    this.search_user = function (userId) {
+    this.search_user_role = function (userId) {
         var db = Connect.connect;
         db.then(value =>
-            value.collection('users').findOne({
-                '_id': ObjectId(userId)
+            value.collection('user_role').findOne({
+                'user_id': userId
             }, {}, function (err, res) {
                 if (err) {
                     console.log('id不存在');
@@ -32,19 +33,20 @@ function User() {
             })
         );
     }
-    this.delete_user = function (userId) {
+    this.delete_user_role = function (userId,roleId) {
         var db = Connect.connect;
-        db.then(value => value.collection('users').deleteOne({
-            '_id': ObjectId(userId)
+        db.then(value => value.collection('user_role').deleteOne({
+            'user_id': userId,
+            'roleId': roleId
         }, function (err, res) {
             if (err) {
                 console.log('id不存在');
                 console.log(err);
             } else {
-                console.log('删除成功');
+                console.log('解除绑定成功');
                 console.log(res);
             }
         }))
     }
 }
-module.exports = User;
+module.exports=UserRole;
