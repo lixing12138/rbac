@@ -48,5 +48,13 @@ function User() {
             }
         }))
     }
+    this.check_user=function(userId,privilegeId){
+        var db=Connect.connect;
+        db.then(value=>value.collection('user_role').find({
+            'user_id': userId
+        }).forEach(element => {
+          console.log(element['role_id']);  
+        }))
+    }
 }
 module.exports = User;

@@ -1,42 +1,29 @@
 var sd = require('silly-datetime');
-
-function UserRole(){
+var Operate = require('../database/operate')
+var operate = new Operate();
+function UserRole() {
     var Connect = require('../connect');
-    this.insert_user_role = function (userId,roleId) {
+    this.insert_user_role = function (userId, roleId) {
         var db = Connect.connect;
-        console.log(userId);
         db.then(value =>
-            value.collection('user_role').insertOne({
-                'user_id': userId,
-                'role_id': roleId,
-                'update_time':sd.format(new Date(),'YYYY-MM-DD HH:mm:ss')
+            operate.select_table(value, 'user_role', { 'user_id': userId }).then(val =>
+                val.length === 0 ? operate.insert_table(value, 'user_role', {
+                    'user_id': userId,
+                    'roles': [{"role_id":roleId,'update_time': sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss')}],
+                }) : operate.update_table(value, 'user_role', { 'role_id': roleId }, { 'user_id': userId })
+            )
 
-            }, function (err) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log('succeed in insert user_role');
-                }
-            })
-        );
-
+        ).catch(error => console.log(error));
     }
     this.search_user_role = function (userId) {
         var db = Connect.connect;
         db.then(value =>
-            value.collection('user_role').findOne({
-                'user_id': userId
-            }, {}, function (err, res) {
-                if (err) {
-                    console.log('id不存在');
-                    console.log(err);
-                } else {
-                    console.log(res);
-                }
-            })
+            operate.select_table_single(value, 'user_role', { 'user_id': userId }).then(val =>
+                console.log(val)
+            )
         );
     }
-    this.delete_user_role = function (userId,roleId) {
+    this.delete_user_role = function (userId, roleId) {
         var db = Connect.connect;
         db.then(value => value.collection('user_role').deleteOne({
             'user_id': userId,
@@ -52,4 +39,4 @@ function UserRole(){
         }))
     }
 }
-module.exports=UserRole;
+module.exports = UserRole;

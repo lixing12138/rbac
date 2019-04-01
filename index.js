@@ -92,4 +92,8 @@ app.use(route.post('/rolePrivilege',rolePrivilegeInsert));
 app.use(route.get('/rolePrivilege',rolePrivilegeSearch));
 app.use(route.delete('/rolePrivilege',rolePrivilegeDelete));
 
+const userCkeckPrivilege = ctx => {
+    user.check_user(ctx.query['userId'],ctx.query['privilegeId']);
+}
+app.use(route.get('/user/check',userCkeckPrivilege));
 app.listen(3000);
