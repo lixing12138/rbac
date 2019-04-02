@@ -1,55 +1,53 @@
 var sd = require('silly-datetime');
+var Operate = require('../database/operate')
 
 function RolePrivilege() {
     var Connect = require('../connect');
-    this.insert_role_privilege = function (roleId,privilegeId) {
+    var operate = new Operate();
+    this.insert_role_privilege = function(roleId, privilegeId) {
         var db = Connect.connect;
         db.then(value =>
-            value.collection('role_privilege').insertOne({
-                'role_id': roleId,
-                'privilege_id': privilegeId,
-                'update_time':sd.format(new Date(),'YYYY-MM-DD HH:mm:ss')
-
-            }, function (err) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log('succeed in insert role_privilege');
-                }
-            })
-        );
-    }
-
-    this.search_role_privilege = function (roleId) {
-        var db = Connect.connect;
-        db.then(value =>
-            value.collection('role_privilege').findOne({
+            operate.select_table(value, 'role_privilege', {
                 'role_id': roleId
-            }, {}, function (err, res) {
-                if (err) {
-                    console.log('id不存在');
-                    console.log(err);
-                } else {
-                    console.log(res);
-                }
-            })
+            }).then(val =>
+                val.length === 0 ? operate.insert_table(value, 'role_privilege', {
+                    'user_id': userId,
+                    'privileges': [{
+                        "privilege_id": privilegeId,
+                        'update_time': sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
+                    }],
+                }) : operate.update_table(value, 'role_privilege', {
+                    'privilege_id': privilegeId
+                }, {
+                    'role_id': roleId
+                })
+            ).catch(err => console.log(err))
+        ).catch(err => console.log(err));
+    }
+
+    this.search_role_privilege = function(roleId) {
+        var db = Connect.connect;
+        db.then(value =>
+            operate.select_table_single(value, 'role_privilege', {
+                'role_id': roleId
+            }).then(val =>
+                console.log(val)
+            )
         );
     }
 
-    this.delete_role_privilege = function (roleId,privilegeId) {
+    this.delete_role_privilege = function(roleId, privilegeId) {
         var db = Connect.connect;
-        db.then(value => value.collection('role_privilege').deleteOne({
-            'role_id': roleId,
-            'privilege_id':privilegeId
-        }, function (err, res) {
-            if (err) {
-                console.log('id不存在');
-                console.log(err);
-            } else {
-                console.log('角色权限解除绑定成功');
-                console.log(res);
-            }
-        }))
+        db.then(value =>
+            operate.delete_table(value, 'role_privilege', {
+                'role_id': roleId,
+                'privileges': {
+                    $elemMatch: {
+                        'privilege_id': privilegeId
+                    }
+                }
+            })
+        )
     }
 }
 module.exports = RolePrivilege;
