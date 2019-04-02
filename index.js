@@ -7,6 +7,7 @@ const UserRole = require('./user_role/user_role');
 const RolePrivilege = require('./role_privilege/role_privilege');
 const UserGroup = require('./userGroups/userGroup');
 const UserUserGroup=require('./user_userGroups/user_userGroup');
+const RoleUserGroup=require('./role_userGroups/role_userGroup');
 
 const app = new koa();
 const user = new Users();
@@ -16,6 +17,7 @@ const userRole = new UserRole();
 const rolePrivilege = new RolePrivilege();
 const userGroup = new UserGroup();
 const userUserGroup=new UserUserGroup();
+const roleUserGroup=new RoleUserGroup();
 
 /**
  * user module 
@@ -138,6 +140,23 @@ const userUserGroupDelete = ctx => {
 app.use(route.post('/userUserGroup',userUserGroupInsert));
 app.use(route.get('/userUserGroup',userUserGroupSearch));
 app.use(route.delete('/userUserGroup',userUserGroupDelete));
+
+/**
+ * 用户组-角色
+ * role-userGroup
+ */
+const roleUserGroupInsert = ctx => {
+    roleUserGroup.insert_roleUserGroup(ctx.query['userGroupId'],ctx.query['roleId']);
+}
+const roleUserGroupSearch = ctx => {
+    roleUserGroup.search_roleUserGroup(ctx.query['userGroupId'],ctx.query['roleId']);
+}
+const roleUserGroupDelete = ctx => {
+    roleUserGroup.delete_roleUserGroup(ctx.query['userGroupId'],ctx.query['roleId']);
+}
+app.use(route.post('/roleUserGroup',roleUserGroupInsert));
+app.use(route.get('/roleUserGroup',roleUserGroupSearch));
+app.use(route.delete('/roleUserGroup',roleUserGroupDelete));
 
 
 app.listen(3000);

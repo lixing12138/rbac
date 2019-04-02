@@ -48,8 +48,10 @@ function User() {
                     console.log('删除成功');
                     console.log(res);
                 }
-            }))
+            })
+        );
     }
+
     this.check_user = function (userId, privilegeId) {
         var db = Connect.connect;
         db.then(value =>
@@ -61,7 +63,8 @@ function User() {
                         v => v.length === 0 ? console.log('checking') : console.log('yes'))
                 )
             )
-        )
+        );
     }
+    
 }
 module.exports = User;
