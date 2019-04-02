@@ -1,52 +1,35 @@
 var ObjectId = require('mongodb').ObjectID;
 var sd = require('silly-datetime');
+var Operate = require('../database/operate');
 
 function Privilege() {
     var Connect = require('../connect');
-    this.insert_privilege = function (privilegeDesc) {
+    var operate = new Operate();
+    this.insert_privilege = function (privilegeDescEn,privilegeDescCh) {
         var db = Connect.connect;
         db.then(value =>
-            value.collection('privileges').insertOne({
-                'privilege_desc':privilegeDesc,
+            operate.insert_table(value,'privileges',{
+                'privilege_desc_en':privilegeDescEn,
+                'privilege_desc_ch':privilegeDescCh,
                 'update_time':sd.format(new Date(),'YYYY-MM-DD HH:mm:ss')
-
-            }, function (err) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log('succeed in insert privilege');
-                }
             })
         );
     }
     this.search_privilege = function (privilegeId) {
         var db = Connect.connect;
         db.then(value =>
-            value.collection('privileges').findOne({
-                '_id': ObjectId(privilegeId)
-            }, {}, function (err, res) {
-                if (err) {
-                    console.log('privilegeId不存在');
-                    console.log(err);
-                } else {
-                    console.log(res);
-                }
-            })
+            operate.select_table_single(value,'privileges',{
+                '_id':ObjectId(privilegeId)
+            }).then(val =>
+                console.log(val)
+            )
         );
     }
     this.delete_privilege = function (privilegeId) {
         var db = Connect.connect;
         db.then(value =>
-            value.collection('privileges').deleteOne({
-                '_id': ObjectId(privilegeId)
-            }, function (err, res) {
-                if (err) {
-                    console.log('privilegeId不存在');
-                    console.log(err);
-                } else {
-                    console.log('删除成功');
-                    console.log(res);
-                }
+            operate.delete_table(value,'privileges',{
+                '_id':ObjectId(privilegeId)
             })
         );
     }

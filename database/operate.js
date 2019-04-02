@@ -1,6 +1,7 @@
 function Operate() {
     this.insert_table = function(db, table, dict) {
         db.collection(table).insertOne(dict);
+        console.log('insert successfully')
     }
     this.select_table = function(db, table, dict) {
         return new Promise(
@@ -34,6 +35,7 @@ function Operate() {
     }
     this.delete_table = function(db, table, dict) {
         db.collection(table).deleteOne(dict);
+        console.log('delete successfully')
     }
 }
 module.exports = Operate;
