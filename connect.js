@@ -5,11 +5,10 @@ exports.connect = new Promise(function(resolve, reject) {
         useNewUrlParser: true
     }, function(err, db) {
         if (err) {
-            return err;
+            return reject(err);
         } else {
             var dbo = db.db("db");
             resolve(dbo);
-            reject('reject');
         }
     });
 });

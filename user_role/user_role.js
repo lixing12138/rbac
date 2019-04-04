@@ -1,44 +1,52 @@
 var sd = require('silly-datetime');
 var Operate = require('../database/operate')
+var Connect = require('../connect');
 
 function UserRole() {
-    var Connect = require('../connect');
     var operate = new Operate();
-    this.insert_user_role = function (userId, roleId) {
-        var db = Connect.connect;
-        db.then(value =>
-            operate.select_table(value, 'user_role', {
-                'user_id': userId,
-                'role_id': roleId
-            }).then(val =>
-                val.length === 0 ? operate.insert_table(value, 'user_role', {
-                    'user_id': userId,
-                    "role_id": roleId,
-                    'update_time': sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
-                }) : console.log('user-role have bind')
-            )
-        ).catch(error => console.log(error));
+    this.insert_user_role = async function (userId, roleId) {
+        const conn = await Connect.connect;
+        const resUserRole = await operate.select_table(conn, 'user_role', {
+            'user_id': userId,
+            'role_id': roleId
+        });
+
+        if (resUserRole.length !== 0) {
+            return '该用户已经和角色进行过绑定';
+        }
+        const resInsert = await operate.insert_table(conn, 'user_role', {
+            'user_id': userId,
+            "role_id": roleId,
+            'update_time': sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
+        });
+
+        if (resInsert['result']['ok'] === 1) {
+            return '绑定成功';
+        }
+        return '绑定失败';
     }
 
-    this.search_user_role = function (userId) {
-        var db = Connect.connect;
-        db.then(value =>
-            operate.select_table(value, 'user_role', {
-                'user_id': userId
-            }).then(val =>
-                console.log(val)
-            )
-        );
+    this.search_user_role = async function (userId) {
+        const conn = await Connect.connect;
+        const val = await operate.select_table(conn, 'user_role', {
+            'user_id': userId
+        });
+        if (val.length === 0) {
+            return '该用户没有和其他角色进行绑定';
+        }
+        return val;
     }
-    this.delete_user_role = function (userId, roleId) {
-        var db = Connect.connect;
-        db.then(value =>
-            //console.log(val)
-            operate.delete_table(value, 'user_role', {
-                'user_id': userId,
-                'role_id': roleId
-            })
-        );
+
+    this.delete_user_role = async function (userId, roleId) {
+        const conn= await Connect.connect;
+        const val = await operate.delete_table(conn, 'user_role', {
+            'user_id': userId,
+            'role_id': roleId
+        });
+        if (val['result']['ok'] === 1) {
+            return '用户与角色解绑成功';
+        }
+        return '用户与角色解绑失败';
     }
 }
 module.exports = UserRole;

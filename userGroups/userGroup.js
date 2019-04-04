@@ -7,34 +7,39 @@ function UserGroup() {
 
     var operate = new Operate();
 
-    this.insert_userGroup = function (groupName) {
-        var db = Connect.connect;
-        db.then(value =>
-            operate.insert_table(value, 'userGroup', {
-                'group_name': groupName,
-                'update_time': sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
-            })
-        );
+    this.insert_userGroup = async function (groupName) {
+        const conn = await Connect.connect;
+        const val = await operate.insert_table(conn, 'userGroup', {
+            'group_name': groupName,
+            'update_time': sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
+        });
+
+        if (val['result']['ok'] === 1) {
+            return '添加用户组成功';
+        }
+        return '添加用户组失败';
     }
 
-    this.search_userGroup = function (userGroupId) {
-        var db = Connect.connect;
-        db.then(value =>
-            operate.select_table_single(value, 'userGroup', {
-                '_id': ObjectId(userGroupId)
-            }).then(val =>
-                console.log(val)
-            )
-        );
+    this.search_userGroup = async function (userGroupId) {
+        const conn = await Connect.connect;
+        const val = await operate.select_table_single(conn, 'userGroup',  {
+            '_id': ObjectId(userGroupId)
+        });
+        if (val === null) {
+            return '用户组ID无效';
+        }
+        return val;
     }
 
-    this.delete_userGroup = function (userGroupId) {
-        var db = Connect.connect;
-        db.then(value =>
-            operate.delete_table(value, 'userGroup', {
-                '_id': ObjectId(userGroupId)
-            })
-        );
+    this.delete_userGroup = async function (userGroupId) {
+        const conn = await Connect.connect;
+        const val = await operate.delete_table(conn, 'userGroup', {
+            '_id': ObjectId(userGroupId)
+        });
+        if (val['result']['ok'] === 1) {
+            return '删除用户组成功';
+        }
+        return '删除用户组失败';
     }
 }
 module.exports = UserGroup;
