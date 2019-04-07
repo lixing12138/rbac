@@ -5,7 +5,7 @@ var Operate = require('../database/operate');
 function Role() {
     var Connect = require('../connect');
     var operate = new Operate();
-    this.insert_role = async function (roleName) {
+    this.insert_role = async function(roleName) {
         const conn = await Connect.connect;
         const val = await operate.insert_table(conn, 'roles', {
             'role_name': roleName,
@@ -17,17 +17,15 @@ function Role() {
         }
         return '添加角色失败';
     }
-    this.search_role = async function (roleId) {
+    this.search_role = async function() {
         const conn = await Connect.connect;
-        const val = await operate.select_table_single(conn, 'roles', {
-            '_id': ObjectId(roleId)
-        });
+        const val = await operate.select_table(conn, 'roles', {});
         if (val === null) {
-            return '无效ID';
+            return '暂时没有角色';
         }
         return val;
     }
-    this.delete_role = async function (roleId) {
+    this.delete_role = async function(roleId) {
         const conn = await Connect.connect;
         const val = await operate.delete_table(conn, 'roles', {
             '_id': ObjectId(roleId)

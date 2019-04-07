@@ -4,7 +4,7 @@ var Connect = require('../connect');
 
 function UserRole() {
     var operate = new Operate();
-    this.insert_user_role = async function (userId, roleId) {
+    this.insert_user_role = async function(userId, roleId) {
         const conn = await Connect.connect;
         const resUserRole = await operate.select_table(conn, 'user_role', {
             'user_id': userId,
@@ -26,19 +26,17 @@ function UserRole() {
         return '绑定失败';
     }
 
-    this.search_user_role = async function (userId) {
+    this.search_user_role = async function() {
         const conn = await Connect.connect;
-        const val = await operate.select_table(conn, 'user_role', {
-            'user_id': userId
-        });
+        const val = await operate.select_table(conn, 'user_role', {});
         if (val.length === 0) {
-            return '该用户没有和其他角色进行绑定';
+            return '暂无数据';
         }
         return val;
     }
 
-    this.delete_user_role = async function (userId, roleId) {
-        const conn= await Connect.connect;
+    this.delete_user_role = async function(userId, roleId) {
+        const conn = await Connect.connect;
         const val = await operate.delete_table(conn, 'user_role', {
             'user_id': userId,
             'role_id': roleId

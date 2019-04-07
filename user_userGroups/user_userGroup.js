@@ -6,7 +6,7 @@ function UserUserGroup() {
 
     var operate = new Operate();
 
-    this.insert_userUserGroup = async function (userGroupId, userId) {
+    this.insert_userUserGroup = async function(userGroupId, userId) {
         const conn = await Connect.connect;
         const resUserGroup = await operate.select_table(conn, 'user_userGroup', {
             'userGroup_id': userGroupId,
@@ -28,19 +28,17 @@ function UserUserGroup() {
         return '绑定失败';
     }
 
-    this.search_userUserGroup = async function (userGroupId) {
+    this.search_userUserGroup = async function() {
         const conn = await Connect.connect;
-        const val = await operate.select_table(conn, 'user_userGroup', {
-            'userGroup_id': userGroupId
-        });
+        const val = await operate.select_table(conn, 'user_userGroup', {});
         if (val.length === 0) {
-            return '该用户组没有用户';
+            return '暂时无数据';
         }
         return val;
     }
 
-    this.delete_userUserGroup = async function (userGroupId, userId) {
-        const conn= await Connect.connect;
+    this.delete_userUserGroup = async function(userGroupId, userId) {
+        const conn = await Connect.connect;
         const val = await operate.delete_table(conn, 'user_userGroup', {
             'userGroup_id': userGroupId,
             'user_id': userId

@@ -4,7 +4,7 @@ var Operate = require('../database/operate');
 function RolePrivilege() {
     var Connect = require('../connect');
     var operate = new Operate();
-    this.insert_role_privilege = async function (roleId, privilegeId) {
+    this.insert_role_privilege = async function(roleId, privilegeId) {
         const conn = await Connect.connect;
         const resRolePrivilege = await operate.select_table(conn, 'role_privilege', {
             'role_id': roleId,
@@ -26,22 +26,20 @@ function RolePrivilege() {
         return '绑定失败';
     }
 
-    this.search_role_privilege = async function (roleId) {
+    this.search_role_privilege = async function() {
         const conn = await Connect.connect;
-        const val = await operate.select_table(conn, 'role_privilege', {
-            'role_id': roleId
-        });
+        const val = await operate.select_table(conn, 'role_privilege', {});
         if (val.length === 0) {
             return '该角色没有和其他权限进行绑定';
         }
         return val;
     }
 
-    this.delete_role_privilege = async function (roleId, privilegeId) {
-        const conn= await Connect.connect;
+    this.delete_role_privilege = async function(roleId, privilegeId) {
+        const conn = await Connect.connect;
         const val = await operate.delete_table(conn, 'role_privilege', {
             'role_id': roleId,
-                'privilege_id': privilegeId
+            'privilege_id': privilegeId
         });
         if (val['result']['ok'] === 1) {
             return '角色与权限解绑成功';

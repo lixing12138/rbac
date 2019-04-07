@@ -2,10 +2,10 @@ var sd = require('silly-datetime');
 var Operate = require('../database/operate');
 var Connect = require('../connect');
 
-function RoleUserGroup(){
+function RoleUserGroup() {
     var operate = new Operate();
 
-    this.insert_roleUserGroup = async function (roleGroupId, roleId) {
+    this.insert_roleUserGroup = async function(roleGroupId, roleId) {
         const conn = await Connect.connect;
         const resRoleGroup = await operate.select_table(conn, 'role_userGroup', {
             'userGroup_id': roleGroupId,
@@ -27,19 +27,17 @@ function RoleUserGroup(){
         return '绑定失败';
     }
 
-    this.search_roleUserGroup = async function (roleGroupId) {
+    this.search_roleUserGroup = async function() {
         const conn = await Connect.connect;
-        const val = await operate.select_table(conn, 'role_userGroup', {
-            'userGroup_id': roleGroupId
-        });
+        const val = await operate.select_table(conn, 'role_userGroup', {});
         if (val.length === 0) {
             return '该用户组没有绑定角色';
         }
         return val;
     }
 
-    this.delete_roleUserGroup = async function (roleGroupId, roleId) {
-        const conn= await Connect.connect;
+    this.delete_roleUserGroup = async function(roleGroupId, roleId) {
+        const conn = await Connect.connect;
         const val = await operate.delete_table(conn, 'role_userGroup', {
             'userGroup_id': roleGroupId,
             'role_id': roleId
